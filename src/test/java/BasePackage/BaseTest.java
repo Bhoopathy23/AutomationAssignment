@@ -21,6 +21,7 @@ public class BaseTest {
 
        driver.manage().window().maximize();
        driver.get("https://todomvc.com/examples/angular/dist/browser/#/all");
+       // New Code Changes
    }
 @AfterClass
     public void tearDown(){
