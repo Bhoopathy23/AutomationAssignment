@@ -10,13 +10,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TodosPage {
 
     public WebDriver driver;
 
-    String todoitem ="Complete the Assignment";
-    String todoitem2 ="Crack the Interview";
     public TodosPage(WebDriver driver){
         this.driver=driver;
         PageFactory.initElements(driver,this);
@@ -26,7 +26,7 @@ public class TodosPage {
     private WebElement todoTxtField;
 
     @FindBy(css = ".toggle")
-    private WebElement todoCheckBox;
+    private String todoCheckBox=".toggle";
 
     @FindBy(xpath = "//a[@routerlink='/completed']")
     private WebElement CompletedBtn;
@@ -44,62 +44,90 @@ public class TodosPage {
     private WebElement ClearCompletedBtn;
 
     @FindBy(css = ".destroy")
-    private WebElement clearBtn;
+    private List<WebElement> webElementclearBtn;
+
+    private String clearBtn= ".destroy";
 
     @FindBy(xpath = "//li[@class='completed']//label")
-    private WebElement todoCompletedData;
+    private List<WebElement> todoCompletedData;
 
     @FindBy(xpath = "//ul[@class='todo-list']//label")
     private WebElement todoItemsList;
 
-    public void addtodoItem() {
+    @FindBy(xpath = "//div[@class='view']/label")
+    private List<WebElement> todoDataBeforeCheck;
+
+    public void addtodoItem(String[] todoItems) throws InterruptedException {
         WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(10));
         wait.until(ExpectedConditions.elementToBeClickable(todoTxtField));
-        todoTxtField.sendKeys(todoitem);
-        todoTxtField.sendKeys(Keys.ENTER);
-        Assert.assertEquals(todoData.getText(), todoitem);
+
+        for(int i=0;i<todoItems.length;i++){
+            todoTxtField.sendKeys(todoItems[i]);
+            todoTxtField.sendKeys(Keys.ENTER);
+        }
+        Thread.sleep(5000);
     }
 
-    public void addAndCompleteTodo() {
+
+    public List<String> getTodoItemsText(){
+        List<String> actualItems = new ArrayList<>();
+        for(WebElement items:todoDataBeforeCheck){
+            actualItems.add(items.getText());
+        }
+        return actualItems;
+    }
+
+    public void addAndCompleteTodo() throws InterruptedException {
+        List<WebElement> allCheckboxes =driver.findElements(By.cssSelector(todoCheckBox));
         JavascriptExecutor js = (JavascriptExecutor)driver;
-        js.executeScript("arguments[0].click();",todoCheckBox);
+        for(WebElement checkbox:allCheckboxes){
+            js.executeScript("arguments[0].click();",checkbox);
+        }
+        Thread.sleep(5000);
         CompletedBtn.click();
-        Assert.assertEquals(todoCompletedData.getText(),todoitem);
+    }
+    public void clearcompletedTodo() throws InterruptedException {
+        Thread.sleep(5000);
         Actions actions = new Actions(driver);
-        actions.moveToElement(todoData).click(clearBtn).perform();
+        for(WebElement btnClear : webElementclearBtn){
+            actions.moveToElement(todoData).click(btnClear).perform();
+        }
+        Thread.sleep(5000);
     }
 
-    public void addAndDeletetodoItem() {
-        todoTxtField.sendKeys(todoitem);
-        todoTxtField.sendKeys(Keys.ENTER);
+    public List<String> completedTodoitemsGetText(){
+        List<String> allCompletedTodos=new ArrayList<>();
+        for(WebElement completedTodo:todoCompletedData){
+            allCompletedTodos.add(completedTodo.getText());
+        }
+        return allCompletedTodos;
+    }
+
+    public void addAndDeletetodoItem(String[] todoItems) throws InterruptedException {
+        for(int i=0;i<todoItems.length;i++){
+            todoTxtField.sendKeys(todoItems[i]);
+            todoTxtField.sendKeys(Keys.ENTER);
+        }
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(ActiveBtn));
+        ActiveBtn.click();
+        Thread.sleep(5000);
+
+    }
+    public void clearNotCompletedTodos(){
         Actions actions = new Actions(driver);
-        actions.moveToElement(todoData).click(clearBtn).perform();
-       String todoitemcheck =todoItemsList.getText();
-       Assert.assertEquals(todoitemcheck,todoitem);
+        for(WebElement ClearBtn:webElementclearBtn){
+            actions.moveToElement(todoData).click(ClearBtn).perform();
+        }
     }
 
 
 
-//    public void allTodoCheck() {
-//
-//    }
-//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-//        wait.until(ExpectedConditions.elementToBeClickable(ActiveBtn));
-//        ActiveBtn.click();
-//
-//      CompletedBtn.click();
-//
-//        Assert.assertEquals(todoData.getText(),todoitem);
-//        ClearCompletedBtn.click();
-    //Test to check jenkins job
-//
-//    }
+    public void clickActiveBtn() {
+
+
+    }
 
 }
 
-//input[@class='toggle']/following-sibling::label - todo text
-//.new-todo - textbox
-//a[@routerlink='/completed']
-//.selected
-//a[@routerlink='/active']
-//.toggle - Checkbox todo
+
