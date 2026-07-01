@@ -1,5 +1,6 @@
 package PagesPackage;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
@@ -9,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +117,7 @@ public class TodosPage {
         Thread.sleep(5000);
 
     }
-    public void clearNotCompletedTodos(){
+    public void clearNotCompletedTodos() {
         Actions actions = new Actions(driver);
         for(WebElement ClearBtn:webElementclearBtn){
             actions.moveToElement(todoData).click(ClearBtn).perform();
