@@ -31,7 +31,7 @@ public class TodosPage {
     @FindBy(css = ".toggle")
     private String todoCheckBox=".toggle";
 
-    @FindBy(xpath = "//a[@routerlink='/completed']")
+    @FindBy(xpath = "//a[@routerlink='/completed'")
     private WebElement CompletedBtn;
 
     @FindBy(xpath = "//a[@routerlink='/active']")
@@ -127,7 +127,6 @@ public class TodosPage {
 
 
     public void clickActiveBtn() {
-//BTN
 
     }
 
